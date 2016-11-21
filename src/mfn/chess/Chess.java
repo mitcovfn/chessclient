@@ -9,8 +9,10 @@ public class Chess {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Chess");
+        UserInterface ui = new UserInterface();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
+        frame.add(ui);
         frame.setResizable(false);
         frame.setVisible(true);
     }
