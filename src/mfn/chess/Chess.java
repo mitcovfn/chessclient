@@ -1,6 +1,8 @@
 package mfn.chess;
 
 
+import java.util.Arrays;
+
 /**
  * Created by Fyodor
  */
@@ -42,6 +44,10 @@ public class Chess {
 //        frame.setResizable(false);
 //        frame.setVisible(true);
         System.out.println(posibleMoves());
+        makeMove("6555 ");
+        for (int i = 0; i < 8; i++) {
+            System.out.println(Arrays.toString(chessBoard[i]));
+        }
     }
 
     public static String posibleMoves() {
@@ -69,6 +75,24 @@ public class Chess {
             }
         }
         return list; //x1-y1, x2-y2
+    }
+
+    public static void makeMove(String move) {
+
+        int x1 = Character.getNumericValue(move.charAt(0));
+        int y1 = Character.getNumericValue(move.charAt(1));
+        int x2 = Character.getNumericValue(move.charAt(2));
+        int y2 = Character.getNumericValue(move.charAt(3));
+
+        if(move.charAt(4)!='P'){
+            chessBoard[x2][y2] = chessBoard[x1][y1];
+            chessBoard[x1][y1] = " ";
+        }else {
+            //if pawn promotion
+            //column1, column2, capture-piece, new-piece, P
+            chessBoard[1][x1] = " ";
+            chessBoard[0][y1] = String.valueOf(move.charAt(3));
+        }
     }
 
     //Pawn Movement
@@ -129,7 +153,7 @@ public class Chess {
                     chessBoard[r - 1][c] = temp[k];
                     if (kingSafe()) {
                         //column1, column2, capture-piece, new-piece, P
-                        list = list + c + c  + oldPiece + temp[k] + "P";
+                        list = list + c + c + oldPiece + temp[k] + "P";
                     }
                     chessBoard[r][c] = "P";
                     chessBoard[r - 1][c] = oldPiece;
