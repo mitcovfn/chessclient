@@ -4,7 +4,6 @@ package mfn.chess;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Scanner;
 
 /**
  * Created by Fyodor
@@ -48,9 +47,7 @@ public class Chess {
 //        frame.setResizable(false);
 //        frame.setVisible(true);
         System.out.println(posibleMoves());
-        System.out.println(alphaBeta(GLOBAL_DEPTH, 1000000, -1000000, "", 0));
-        makeMove("6555 ");
-        undoMove("6555 ");
+        makeMove(alphaBeta(GLOBAL_DEPTH, 1000000, -1000000, "", 0));
         for (int i = 0; i < 8; i++) {
             System.out.println(Arrays.toString(chessBoard[i]));
         }
@@ -85,17 +82,9 @@ public class Chess {
 
     public static String alphaBeta(int depth, int beta, int alpha, String move, int player) {
         //return in the form of 1234b######
-        //String list = posibleMoves();
-        String list = "1";//---
-        if(depth==0 || list.length() ==0) {return move+(rating()/**(player*2-1)*/);}
-        list = "";//-----
-        System.out.print("How many moves are there: ");//----
-        Scanner sc = new Scanner(System.in);//----
-        int temp = sc.nextInt();//---
-        for (int i = 0; i < temp; i++) {//-----
-            list+="1111b";//----
-        }
-
+        String list = posibleMoves();
+        if(depth==0 || list.length() ==0) {return move+(rating()*(player*2-1));}
+        //sort later
         player=1-player; // 1 or 0
         for (int i = 0; i < list.length(); i+=5) {
             makeMove(list.substring(i, i+5));
@@ -130,14 +119,29 @@ public class Chess {
     }
 
     public static void flipBoard(){
-
+        String temp;
+        for (int i = 0; i <32; i++) {
+            int r=i/8, c=i%8;
+            if(Character.isUpperCase(chessBoard[r][c].charAt(0))){
+                temp = chessBoard[r][c].toLowerCase();
+            }else {
+                temp = chessBoard[r][c].toUpperCase();
+            }
+            if(Character.isUpperCase(chessBoard[7-r][7-c].charAt(0))){
+                chessBoard[r][c]=chessBoard[7-r][7-c].toLowerCase();
+            }else {
+                chessBoard[r][c]=chessBoard[7-r][7-c].toUpperCase();
+            }
+            chessBoard[7-r][7-c] = temp;
+        }
+        int kingTemp=kingPositionC;
+        kingPositionC = 63-kingPositionL;
+        kingPositionL=63-kingTemp;
     }
 
     public static int rating(){
-        System.out.print("Wha is the score: ");
-        Scanner sc = new Scanner(System.in);
-        return sc.nextInt();
-        //return  0;
+
+        return  0;
     }
 
     public static void makeMove(String move) {
@@ -150,6 +154,9 @@ public class Chess {
         if(move.charAt(4)!='P'){
             chessBoard[x2][y2] = chessBoard[x1][y1];
             chessBoard[x1][y1] = " ";
+            if("A".equals(chessBoard[x2][y2])){
+                kingPositionC = 8 * x2 + y2;
+            }
         }else {
             //if pawn promotion
             //column1, column2, capture-piece, new-piece, P
@@ -168,6 +175,9 @@ public class Chess {
         if(move.charAt(4)!='P'){
             chessBoard[x1][y1] = chessBoard[x2][y2];
             chessBoard[x2][y2] = String.valueOf(move.charAt(4));
+            if("A".equals(chessBoard[x1][y1])){
+                kingPositionC = 8 * x1 + y1;
+            }
         }else {
             chessBoard[1][x1] = "P";
             chessBoard[0][y1] = String.valueOf(move.charAt(2));
