@@ -2,6 +2,8 @@ package mfn.chess;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Created by Fyodor
@@ -10,10 +12,47 @@ class UserInterface extends JPanel {
 
     private static final int CELL_WIDTH = 64;
     private static final int CELL_HEIGHT = 64;
+    private static int mouseX, mouseY, newmouseX, newmouseY;
     private Image chessPieces = new ImageIcon("img/chessPieces.png").getImage();
 
     public UserInterface() {
         setBorder(BorderFactory.createLineBorder(Color.black));
+
+        this.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                if (e.getX() < 8 * CELL_WIDTH && e.getY() < 8 * CELL_WIDTH) {
+                    mouseX = e.getX();
+                    mouseY = e.getY();
+                    repaint();
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                if (e.getX() < 8 * CELL_WIDTH && e.getY() < 8 * CELL_WIDTH) {
+                    newmouseX = e.getX();
+                    newmouseY = e.getY();
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        String dragMove;
+                        if (newmouseY / CELL_WIDTH == 0 && mouseY / CELL_WIDTH == 1 && "P".equals(Chess.chessBoard[mouseY / CELL_WIDTH][mouseX / CELL_WIDTH])) {
+                            //pawn promotion
+                            dragMove = "" + mouseX / CELL_WIDTH + newmouseX / CELL_WIDTH + Chess.chessBoard[newmouseY / CELL_WIDTH][newmouseX / CELL_WIDTH] + "QP";
+                        } else {
+                            //regular move
+                            dragMove = "" + mouseY / CELL_WIDTH + mouseX / CELL_WIDTH + newmouseY / CELL_WIDTH + newmouseX / CELL_WIDTH + Chess.chessBoard[newmouseY / CELL_WIDTH][newmouseX / CELL_WIDTH];
+                        }
+                        String userPosibilities = Chess.posibleMoves();
+                        if (userPosibilities.replaceAll(dragMove, "").length() < userPosibilities.length()) {
+                            Chess.makeMove(dragMove);
+                        }
+                    }
+                    repaint();
+                }
+            }
+        });
     }
 
     @Override

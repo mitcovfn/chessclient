@@ -33,24 +33,21 @@ public class Chess {
         while (!"a".equals(chessBoard[kingPositionL / 8][kingPositionL % 8])) {
             kingPositionL++;
         } //get king's location
-//        JFrame frame = new JFrame("Chess");
-//        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        UserInterface ui = new UserInterface();
-//        frame.add(ui);
-//        frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-//        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-//        int x = (dim.width - WINDOW_WIDTH) / 2;
-//        int y = (dim.height - WINDOW_HEIGHT) / 2;
-//        frame.setLocation(x, y);
-//        ImageIcon icon = new ImageIcon("img/icon.jpg");
-//        frame.setIconImage(icon.getImage());
-//        frame.setResizable(false);
-//        frame.setVisible(true);
-        System.out.println(posibleMoves());
-        makeMove(alphaBeta(GLOBAL_DEPTH, 1000000, -1000000, "", 0));
-        for (int i = 0; i < 8; i++) {
-            System.out.println(Arrays.toString(chessBoard[i]));
-        }
+
+        JFrame frame = new JFrame("Chess");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        UserInterface ui = new UserInterface();
+        frame.add(ui);
+        frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (dim.width - WINDOW_WIDTH) / 2;
+        int y = (dim.height - WINDOW_HEIGHT) / 2;
+        frame.setLocation(x, y);
+        ImageIcon icon = new ImageIcon("img/icon.jpg");
+        frame.setIconImage(icon.getImage());
+        frame.setResizable(false);
+        frame.setVisible(true);
+
     }
 
     public static String posibleMoves() {
@@ -83,65 +80,71 @@ public class Chess {
     public static String alphaBeta(int depth, int beta, int alpha, String move, int player) {
         //return in the form of 1234b######
         String list = posibleMoves();
-        if(depth==0 || list.length() ==0) {return move+(rating()*(player*2-1));}
+        if (depth == 0 || list.length() == 0) {
+            return move + (rating() * (player * 2 - 1));
+        }
         //sort later
-        player=1-player; // 1 or 0
-        for (int i = 0; i < list.length(); i+=5) {
-            makeMove(list.substring(i, i+5));
+        player = 1 - player; // 1 or 0
+        for (int i = 0; i < list.length(); i += 5) {
+            makeMove(list.substring(i, i + 5));
             flipBoard();
-            String returnString = alphaBeta(depth-1, beta, alpha, list.substring(i, i+5), player);
+            String returnString = alphaBeta(depth - 1, beta, alpha, list.substring(i, i + 5), player);
             int value = Integer.valueOf(returnString.substring(5));
             flipBoard();
-            undoMove(list.substring(i, i+5));
-            if (player==0){
-                if(value<=beta){
-                    beta=value;
-                    if (depth==GLOBAL_DEPTH){ move = returnString.substring(0,5);}
+            undoMove(list.substring(i, i + 5));
+            if (player == 0) {
+                if (value <= beta) {
+                    beta = value;
+                    if (depth == GLOBAL_DEPTH) {
+                        move = returnString.substring(0, 5);
+                    }
                 }
-            }else {
-                if(value>alpha){
-                    alpha=value;
-                    if (depth==GLOBAL_DEPTH){ move = returnString.substring(0,5);}
+            } else {
+                if (value > alpha) {
+                    alpha = value;
+                    if (depth == GLOBAL_DEPTH) {
+                        move = returnString.substring(0, 5);
+                    }
                 }
             }
-            if(alpha>=beta){
-                if(player==0)
-                    return move+beta;
+            if (alpha >= beta) {
+                if (player == 0)
+                    return move + beta;
                 else
-                    return move+alpha;
+                    return move + alpha;
             }
         }
 
-        if(player==0)
-            return move+beta;
+        if (player == 0)
+            return move + beta;
         else
-            return move+alpha;
+            return move + alpha;
     }
 
-    public static void flipBoard(){
+    public static void flipBoard() {
         String temp;
-        for (int i = 0; i <32; i++) {
-            int r=i/8, c=i%8;
-            if(Character.isUpperCase(chessBoard[r][c].charAt(0))){
+        for (int i = 0; i < 32; i++) {
+            int r = i / 8, c = i % 8;
+            if (Character.isUpperCase(chessBoard[r][c].charAt(0))) {
                 temp = chessBoard[r][c].toLowerCase();
-            }else {
+            } else {
                 temp = chessBoard[r][c].toUpperCase();
             }
-            if(Character.isUpperCase(chessBoard[7-r][7-c].charAt(0))){
-                chessBoard[r][c]=chessBoard[7-r][7-c].toLowerCase();
-            }else {
-                chessBoard[r][c]=chessBoard[7-r][7-c].toUpperCase();
+            if (Character.isUpperCase(chessBoard[7 - r][7 - c].charAt(0))) {
+                chessBoard[r][c] = chessBoard[7 - r][7 - c].toLowerCase();
+            } else {
+                chessBoard[r][c] = chessBoard[7 - r][7 - c].toUpperCase();
             }
-            chessBoard[7-r][7-c] = temp;
+            chessBoard[7 - r][7 - c] = temp;
         }
-        int kingTemp=kingPositionC;
-        kingPositionC = 63-kingPositionL;
-        kingPositionL=63-kingTemp;
+        int kingTemp = kingPositionC;
+        kingPositionC = 63 - kingPositionL;
+        kingPositionL = 63 - kingTemp;
     }
 
-    public static int rating(){
+    public static int rating() {
 
-        return  0;
+        return 0;
     }
 
     public static void makeMove(String move) {
@@ -151,13 +154,13 @@ public class Chess {
         int x2 = Character.getNumericValue(move.charAt(2));
         int y2 = Character.getNumericValue(move.charAt(3));
 
-        if(move.charAt(4)!='P'){
+        if (move.charAt(4) != 'P') {
             chessBoard[x2][y2] = chessBoard[x1][y1];
             chessBoard[x1][y1] = " ";
-            if("A".equals(chessBoard[x2][y2])){
+            if ("A".equals(chessBoard[x2][y2])) {
                 kingPositionC = 8 * x2 + y2;
             }
-        }else {
+        } else {
             //if pawn promotion
             //column1, column2, capture-piece, new-piece, P
             chessBoard[1][x1] = " ";
@@ -172,13 +175,13 @@ public class Chess {
         int x2 = Character.getNumericValue(move.charAt(2));
         int y2 = Character.getNumericValue(move.charAt(3));
 
-        if(move.charAt(4)!='P'){
+        if (move.charAt(4) != 'P') {
             chessBoard[x1][y1] = chessBoard[x2][y2];
             chessBoard[x2][y2] = String.valueOf(move.charAt(4));
-            if("A".equals(chessBoard[x1][y1])){
+            if ("A".equals(chessBoard[x1][y1])) {
                 kingPositionC = 8 * x1 + y1;
             }
-        }else {
+        } else {
             chessBoard[1][x1] = "P";
             chessBoard[0][y1] = String.valueOf(move.charAt(2));
         }
