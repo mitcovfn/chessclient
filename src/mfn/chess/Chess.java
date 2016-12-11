@@ -90,7 +90,7 @@ public class Chess {
         //return in the form of 1234b######
         String list = posibleMoves();
         if (depth == 0 || list.length() == 0) {
-            return move + (rating() * (player * 2 - 1));
+            return move + (Rating.rating(list.length(), GLOBAL_DEPTH) * (player * 2 - 1));
         }
         //sort later
         player = 1 - player; // 1 or 0
@@ -149,11 +149,6 @@ public class Chess {
         int kingTemp = kingPositionC;
         kingPositionC = 63 - kingPositionL;
         kingPositionL = 63 - kingTemp;
-    }
-
-    public static int rating() {
-
-        return 0;
     }
 
     public static void makeMove(String move) {
