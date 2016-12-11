@@ -47,6 +47,10 @@ class UserInterface extends JPanel {
                         String userPosibilities = Chess.posibleMoves();
                         if (userPosibilities.replaceAll(dragMove, "").length() < userPosibilities.length()) {
                             Chess.makeMove(dragMove);
+                            Chess.flipBoard();
+                            Chess.makeMove(Chess.alphaBeta(Chess.GLOBAL_DEPTH, 1000000, -1000000, "", 0));
+                            Chess.flipBoard();
+                            repaint();
                         }
                     }
                     repaint();

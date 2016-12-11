@@ -3,7 +3,6 @@ package mfn.chess;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 
 /**
  * Created by Fyodor
@@ -11,9 +10,10 @@ import java.util.Arrays;
 public class Chess {
     private static final int WINDOW_WIDTH = 519;
     private static final int WINDOW_HEIGHT = 542;
-    private static final int GLOBAL_DEPTH = 4;
+    static final int GLOBAL_DEPTH = 4;
 
     static int kingPositionC, kingPositionL;
+    static int humanAsWhite=-1; //1 = human as white, 0 = human as black
 
     static String[][] chessBoard = {
             {"r", "k", "b", "q", "a", "b", "k", "r"},
@@ -47,6 +47,15 @@ public class Chess {
         frame.setIconImage(icon.getImage());
         frame.setResizable(false);
         frame.setVisible(true);
+
+        Object[] option = {"Computer", "Human"};
+        humanAsWhite = JOptionPane.showOptionDialog(null, "Who should play as white?", "ABC Option", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, option, option[1]);
+        if (humanAsWhite == 0){
+            makeMove(alphaBeta(GLOBAL_DEPTH, 1000000, -1000000, "", 0));
+            flipBoard();
+            frame.repaint();
+        }
 
     }
 
