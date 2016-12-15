@@ -87,7 +87,25 @@ public class Rating {
     }
 
     public static int rateAttack() {
-        return 0;
+        int counter =0;
+        int tempPositionC = Chess.kingPositionC;
+        for (int i = 0; i < 64; i++) {
+            switch (Chess.chessBoard[i/8][i%8]){
+                case "P" : Chess.kingPositionC=i; if (!Chess.kingSafe()){counter-=64;}
+                    break;
+                case "R" : Chess.kingPositionC=i; if (!Chess.kingSafe()){counter-=500;}
+                    break;
+                case "K" : Chess.kingPositionC=i; if (!Chess.kingSafe()){counter-=300;}
+                    break;
+                case "B" : Chess.kingPositionC=i; if (!Chess.kingSafe()){counter-=300;}
+                    break;
+                case "Q" : Chess.kingPositionC=i; if (!Chess.kingSafe()){counter-=900;}
+                    break;
+            }
+        }
+        Chess.kingPositionC = tempPositionC;
+        if (!Chess.kingSafe()){counter-=200;}
+        return counter/2;
     }
 
     public static int rateMaterial() {
