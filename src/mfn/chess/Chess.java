@@ -52,7 +52,10 @@ public class Chess {
         humanAsWhite = JOptionPane.showOptionDialog(null, "Who should play as white?", "ABC Option", JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, option, option[1]);
         if (humanAsWhite == 0){
+            long startTime = System.currentTimeMillis();
             makeMove(alphaBeta(GLOBAL_DEPTH, 1000000, -1000000, "", 0));
+            long endTime = System.currentTimeMillis();
+            System.out.println("That took " +(endTime-startTime)+" millisec");
             flipBoard();
             frame.repaint();
         }
@@ -92,7 +95,7 @@ public class Chess {
         if (depth == 0 || list.length() == 0) {
             return move + (Rating.rating(list.length(), GLOBAL_DEPTH) * (player * 2 - 1));
         }
-        //sort later
+        list=sortMoves(list);
         player = 1 - player; // 1 or 0
         for (int i = 0; i < list.length(); i += 5) {
             makeMove(list.substring(i, i + 5));
@@ -128,6 +131,26 @@ public class Chess {
             return move + beta;
         else
             return move + alpha;
+    }
+
+    public static String sortMoves(String list) {
+        int[] score=new int [list.length()/5];
+        for (int i=0;i<list.length();i+=5) {
+            makeMove(list.substring(i, i+5));
+            score[i/5]=-Rating.rating(-1, 0);
+            undoMove(list.substring(i, i+5));
+        }
+        String newListA="", newListB=list;
+        for (int i=0;i<Math.min(6, list.length()/5);i++) {//first few moves only
+            int max=-1000000, maxLocation=0;
+            for (int j=0;j<list.length()/5;j++) {
+                if (score[j]>max) {max=score[j]; maxLocation=j;}
+            }
+            score[maxLocation]=-1000000;
+            newListA+=list.substring(maxLocation*5,maxLocation*5+5);
+            newListB=newListB.replace(list.substring(maxLocation*5,maxLocation*5+5), "");
+        }
+        return newListA+newListB;
     }
 
     public static void flipBoard() {
